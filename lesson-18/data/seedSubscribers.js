@@ -8,11 +8,14 @@ const mongoose = require("mongoose"),
   Subscriber = require("../models/subscriber");
 
 // 데이터베이스 연결 설정
-mongoose.connect("mongodb://127.0.0.1:27017/ut-nodejs", {
-  useNewUrlParser: true,
-});
+mongoose.connect(
+  "mongodb+srv://wt88218:gusxor0203@ut-node.blvb1gp.mongodb.net/?retryWrites=true&w=majority&appName=ut-node", // Atlas 경로
 
-mongoose.connection;
+);
+const db = mongoose.connection;
+db.once("open", () => {
+  console.log("Connected to MONGODB!!!");
+});
 
 var subscribers = [
   {
