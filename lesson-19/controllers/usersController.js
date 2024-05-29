@@ -40,6 +40,40 @@ module.exports = {
   /**
    * @TODO: new, create, redirectView 액션을 객체 리터럴로 묶어 익스포트
    */
+  new: (req, res) => {
+    res.render("users/new");
+  },
+  create: (req, res, next) => {
+    let userParams ={
+      name: {
+        first: req.body.first,
+        last: req.body.last,
+      },
+      email: req.body.email,
+      username: req.body.username,
+      phoneNumber: req.body.phoneNumber,
+      password: req.body.password,
+      courses: req.body.courses,
+      profileImg: req.body.profileImg,
+    };
+    User.create(userParams)
+    .then((user) => {
+      console.log(`Created user: ${user.name}`);
+      res.locals.redirect = "/users";
+      res.locals.user = user;
+      next();
+    })
+    .catch(error => {
+      console.log(`Error creating user: ${error.message}}`);
+      next(error);
+    });
+  },
+  redirectView: (req, res, next) => {
+    let path = res.locals.redirect;
+    if (path) res.redirect(path);
+    else next();
+
+  },
 
   /**
    * 노트: 구독자 컨트롤러에 new와 create 액션을 추가하는 것은 새로운 CRUD 액션을 맞춰
@@ -54,4 +88,19 @@ module.exports = {
   /**
    * @TODO: show, showView 액션을 객체 리터럴로 묶어 익스포트
    */
+  show: (req, res, next) => {
+    let userId = req.params.id; //url 의 매개변수 (/users/:id)
+    User.findById(userId)
+      .then(user =>{
+        res.locals.user = user;
+        next();
+      })
+      .catch(error => {
+        console.log(`Error creating user: ${error.message}}`);
+        next(error);
+      });
+  },
+  showView: (req, res) => {
+    res.render("users/show");
+  }
 };
